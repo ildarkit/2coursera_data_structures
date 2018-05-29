@@ -46,7 +46,7 @@ def get_tree(nodes):
     return tree, root
 
 
-def tree_height(tree, root):
+def get_leaf(tree, root):
     if not tree:
         return
     queue = list()
@@ -61,8 +61,13 @@ def tree_height(tree, root):
     return node
 
 
+# TODO search path to the root
+def reverse(leaf):
+    pass
+
+
 if __name__ == '__main__':
     _ = sys.stdin.readline()
     nodes = list(map(int, sys.stdin.readline().split()))
-    print(tree_height(*get_tree(nodes)))
+    print(get_leaf(*get_tree(nodes)))
 
