@@ -4,7 +4,7 @@ import sys
 
 class Node:
     def __init__(self):
-        self.childs = {'left': None, 'right': None}
+        self.children = []
         self._child_index = None
 
     def __str__(self):
@@ -17,57 +17,47 @@ class Node:
     def child_index(self):
         return self._child_index
 
-    @property
-    def left(self):
-        return self.childs['left']
-
-    @property
-    def right(self):
-        return self.childs['right']
+    def get_children(self):
+        return self.children
 
     def add_child(self, node):
-        if self.childs['left'] is None:
-            self.childs['left'] = node
-        else:
-            self.childs['right'] = node
+        self.children.append(node)
 
 
 def get_tree(nodes):
-    root = None
     n = len(nodes)
     tree = [Node() for _ in range(n)]
     for child_index in range(n):
         parent_index = nodes[child_index]
-        if parent_index == -1:
-            root = child_index
-        else:
-            tree[parent_index].set_child_index(child_index)
+        if parent_index > -1:
+            tree[child_index].set_child_index(child_index)
             tree[parent_index].add_child(tree[child_index])
-    return tree, root
+    return tree
 
 
-def get_leaf(tree, root):
-    if not tree:
+def level_traversal(queue):
+    if not queue:
         return
-    queue = list()
-    queue.append(tree)
-    node = None
     while queue:
-        node = queue.pop()
-        if node.left is not None:
-            queue.insert(0, node.left)
-        if node.right is not None:
-            queue.insert(0, node.right)
-    return node
+        node = queue.pop(0)
+        queue.extend(node.get_children())
+    return node.child_index
 
 
-# TODO search path to the root
-def reverse(leaf):
-    pass
+# search path to the root
+def tree_height(parents):
+    tree = get_tree(parents)
+    start_index = level_traversal(tree)
+    parent_index = parents[start_index]
+    i = 1
+    while parent_index > -1:
+        i += 1
+        parent_index = parents[parent_index]
+    return i
 
 
 if __name__ == '__main__':
     _ = sys.stdin.readline()
     nodes = list(map(int, sys.stdin.readline().split()))
-    print(get_leaf(*get_tree(nodes)))
+    print(tree_height(nodes))
 
