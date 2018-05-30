@@ -27,17 +27,20 @@ class Node:
 def get_tree(nodes):
     n = len(nodes)
     tree = [Node() for _ in range(n)]
+    root = None
     for child_index in range(n):
         parent_index = nodes[child_index]
         if parent_index > -1:
             tree[child_index].set_child_index(child_index)
             tree[parent_index].add_child(tree[child_index])
-    return tree
+        else:
+            root = child_index
+    return tree, root
 
 
-def level_traversal(queue):
-    if not queue:
-        return
+def level_traversal(tree, root):
+    queue = []
+    queue.extend(tree[root].get_children())
     while queue:
         node = queue.pop(0)
         queue.extend(node.get_children())
@@ -46,8 +49,8 @@ def level_traversal(queue):
 
 # search path to the root
 def tree_height(parents):
-    tree = get_tree(parents)
-    start_index = level_traversal(tree)
+    tree, root = get_tree(parents)
+    start_index = level_traversal(tree, root)
     parent_index = parents[start_index]
     i = 1
     while parent_index > -1:
