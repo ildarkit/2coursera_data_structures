@@ -17,7 +17,7 @@ class HeapBuilder:
         for swap in self._swaps:
             print(swap[0], swap[1])
 
-    def generate_swaps(self):
+    def generate_swaps_naive(self):
         """
         The following naive implementation just sorts
         the given sequence using selection sort algorithm
@@ -26,12 +26,47 @@ class HeapBuilder:
         but in the worst case gives a quadratic number of swaps.
         """
 
-        #  TODO: replace by a more efficient implementation
         for i in range(len(self._data)):
             for j in range(i + 1, len(self._data)):
                 if self._data[i] > self._data[j]:
                     self._swaps.append((i, j))
                     self._data[i], self._data[j] = self._data[j], self._data[i]
+
+    # more efficient implementation with heap
+    def generate_swaps(self):
+        self.build_heap()
+
+    def build_heap(self):
+        size = len(self._data)
+        for i in range((size // 2) - 1, -1, -1):
+            self.sift_down(i, store_swaps=True)
+        # heap sort
+        #if self._swaps:
+        #    while size - 2:
+        #        self._data[0], self._data[size - 1] = self._data[size - 1], self._data[0]
+        #        size -= 1
+        #        self.sift_down(0, store_swaps=True)
+
+    def sift_down(self, i, store_swaps=False):
+        size = len(self._data)
+        min_index = i
+        l = self.left_child(i)
+        if l <= size - 1 and self._data[l] < self._data[min_index]:
+            min_index = l
+        r = self.right_child(i)
+        if r <= size - 1 and self._data[r] < self._data[min_index]:
+            min_index = r
+        if i != min_index:
+            self._data[i], self._data[min_index] = self._data[min_index], self._data[i]
+            if store_swaps:
+                self._swaps.append((i, min_index))
+            self.sift_down(min_index, store_swaps=True)
+
+    def left_child(self, i):
+        return i*2 + 1
+
+    def right_child(self, i):
+        return i*2 + 2
 
     def solve(self):
         self.read_data()
