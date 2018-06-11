@@ -12,6 +12,16 @@ class HeapBuilder:
         self._data = [int(s) for s in input().split()]
         assert n == len(self._data)
 
+    def set_data(self, data):
+        self._data = data
+
+    def get_swaps(self):
+        result = list()
+        result.append(str(len(self._swaps)))
+        for swap in self._swaps:
+            result.append(' '.join(map(str, swap)))
+        return '\n'.join(result)
+
     def write_response(self):
         print(len(self._swaps))
         for swap in self._swaps:
