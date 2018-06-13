@@ -15,6 +15,27 @@ class JobQueue:
         self.jobs = list(map(int, input().split()))
         assert m == len(self.jobs)
 
+    def set_data(self, jobs, workers):
+        """
+        Data for tests.
+        :param jobs:
+        :param workers:
+        :return: None
+        """
+        self.num_workers = workers
+        self.next_free_time = [(0, -1)] * self.num_workers
+        self.jobs = jobs
+
+    def get_answer(self):
+        """
+        Response for tests.
+        :return: str
+        """
+        result = list()
+        for i in range(len(self.jobs)):
+            result.append(' '.join(map(str, [self.assigned_workers[i], self.start_times[i]])))
+        return '\n'.join(result)
+
     def write_response(self):
         for i in range(len(self.jobs)):
             print(self.assigned_workers[i], self.start_times[i])
