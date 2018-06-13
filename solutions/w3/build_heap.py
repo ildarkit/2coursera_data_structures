@@ -49,15 +49,9 @@ class HeapBuilder:
     def build_heap(self):
         size = len(self._data)
         for i in range((size // 2) - 1, -1, -1):
-            self.sift_down(i, store_swaps=True)
-        # heap sort
-        #if self._swaps:
-        #    while size - 2:
-        #        self._data[0], self._data[size - 1] = self._data[size - 1], self._data[0]
-        #        size -= 1
-        #        self.sift_down(0, store_swaps=True)
+            self.sift_down(i)
 
-    def sift_down(self, i, store_swaps=False):
+    def sift_down(self, i):
         size = len(self._data)
         min_index = i
         l = self.left_child(i)
@@ -68,9 +62,8 @@ class HeapBuilder:
             min_index = r
         if i != min_index:
             self._data[i], self._data[min_index] = self._data[min_index], self._data[i]
-            if store_swaps:
-                self._swaps.append((i, min_index))
-            self.sift_down(min_index, store_swaps=True)
+            self._swaps.append((i, min_index))
+            self.sift_down(min_index)
 
     def left_child(self, i):
         return i*2 + 1
