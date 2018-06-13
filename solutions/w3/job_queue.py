@@ -7,10 +7,11 @@ class JobQueue:
         self.num_workers = None
         self.next_free_time = None
         self.jobs = None
+        self.next_worker = -1
 
     def read_data(self):
         self.num_workers, m = map(int, input().split())
-        self.next_free_time = [0] * self.num_workers
+        self.next_free_time = [(0, -1)] * self.num_workers  # next time and number of worker
         self.jobs = list(map(int, input().split()))
         assert m == len(self.jobs)
 
@@ -18,18 +19,18 @@ class JobQueue:
         for i in range(len(self.jobs)):
             print(self.assigned_workers[i], self.start_times[i])
 
-    def assign_jobs_naive(self):
-        # starter slow implementation
-        self.assigned_workers = [None] * len(self.jobs)
-        self.start_times = [None] * len(self.jobs)
-        for i in range(len(self.jobs)):
-            next_worker = 0
-            for j in range(1, self.num_workers):
-                if self.next_free_time[j] < self.next_free_time[next_worker]:
-                    next_worker = j
-            self.assigned_workers[i] = next_worker
-            self.start_times[i] = self.next_free_time[next_worker]
-            self.next_free_time[next_worker] += self.jobs[i]
+    # def assign_jobs_naive(self):
+    #     # starter slow implementation
+    #     self.assigned_workers = [None] * len(self.jobs)
+    #     self.start_times = [None] * len(self.jobs)
+    #     for i in range(len(self.jobs)):
+    #         next_worker = 0
+    #         for j in range(1, self.num_workers):
+    #             if self.next_free_time[j] < self.next_free_time[next_worker]:
+    #                 next_worker = j
+    #         self.assigned_workers[i] = next_worker
+    #         self.start_times[i] = self.next_free_time[next_worker]
+    #         self.next_free_time[next_worker] += self.jobs[i]
 
     def assign_jobs(self):
         """
@@ -38,19 +39,25 @@ class JobQueue:
         len_jobs = len(self.jobs)
         self.assigned_workers = [None] * len_jobs
         self.start_times = [None] * len_jobs
-        next_worker = -1
 
         for i in range(len_jobs):
-            if next_worker == self.num_workers - 1:
-                next_worker = -1
-            next_worker += 1
+
             next_time = self.extract_min()
-            self.assigned_workers[i] = next_worker
-            self.start_times[i] = next_time
-            next_time += self.jobs[i]
-            self.insert(next_time)
+
+            _next_worker = next_time[1]
+            if _next_worker == -1:
+                self.next_worker += 1
+                _next_worker = self.next_worker
+            self.assigned_workers[i] = _next_worker
+            self.start_times[i] = next_time[0]
+            _next_time = next_time[0] + self.jobs[i]
+            self.insert((_next_time, _next_worker))
 
     def extract_min(self):
+        """
+        Get min element from root of heap.
+        :return: tuple of next time and worker
+        """
         result = self.next_free_time[0]
         self.next_free_time[0] = self.next_free_time[-1]
         self.next_free_time.pop()
@@ -61,10 +68,10 @@ class JobQueue:
         size = len(self.next_free_time)
         min_index = i
         l = self.left_child(i)
-        if l <= size - 1 and self.next_free_time[l] < self.next_free_time[min_index]:
+        if l <= size - 1 and self.next_free_time[l][0] < self.next_free_time[min_index][0]:
             min_index = l
         r = self.right_child(i)
-        if r <= size - 1 and self.next_free_time[r] < self.next_free_time[min_index]:
+        if r <= size - 1 and self.next_free_time[r][0] < self.next_free_time[min_index][0]:
             min_index = r
         if i != min_index:
             self.next_free_time[i], self.next_free_time[min_index] = (self.next_free_time[min_index],
@@ -85,7 +92,7 @@ class JobQueue:
         self.sift_up(len(self.next_free_time) - 1)
 
     def sift_up(self, i):
-        while i > 0 and self.next_free_time[self.parent(i)] > self.next_free_time[i]:
+        while i > 0 and self.next_free_time[self.parent(i)][0] > self.next_free_time[i][0]:
             _parent = self.parent(i)
             self.next_free_time[_parent], self.next_free_time[i] = self.next_free_time[i], self.next_free_time[_parent]
             i = _parent
