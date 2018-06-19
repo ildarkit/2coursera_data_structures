@@ -1,6 +1,9 @@
 # python3
 
 
+INIT_RESPONSE = 'not found'
+
+
 class Query:
     def __init__(self, query):
         self.type = query[0]
@@ -18,32 +21,32 @@ def write_responses(result):
     print('\n'.join(result))
 
 
+def init_contacts(max_phone_digits=10 ** 7):
+    """
+    A direct addressing scheme is used to store contacts.
+    :return: list of contacts
+    """
+    contacts = []
+    for i in range(max_phone_digits):
+        contacts.append(INIT_RESPONSE)
+    return contacts
+
+
 def process_queries(queries):
     result = []
     # Keep list of all existing (i.e. not deleted yet) contacts.
-    contacts = []
+    contacts = init_contacts()
     for cur_query in queries:
         if cur_query.type == 'add':
             # if we already have contact with such number,
             # we should rewrite contact's name
-            for contact in contacts:
-                if contact.number == cur_query.number:
-                    contact.name = cur_query.name
-                    break
-            else: # otherwise, just add it
-                contacts.append(cur_query)
+
+            contacts[cur_query.number] = cur_query.name
+
         elif cur_query.type == 'del':
-            for j in range(len(contacts)):
-                if contacts[j].number == cur_query.number:
-                    contacts.pop(j)
-                    break
+            contacts[cur_query.number] = INIT_RESPONSE
         else:
-            response = 'not found'
-            for contact in contacts:
-                if contact.number == cur_query.number:
-                    response = contact.name
-                    break
-            result.append(response)
+            result.append(contacts[cur_query.number])
     return result
 
 
