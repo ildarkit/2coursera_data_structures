@@ -14,31 +14,43 @@ class TreeOrders:
         self.left = [0 for _ in range(self.n)]
         self.right = [0 for _ in range(self.n)]
         for i in range(self.n):
-            [a, b, c] = map(int, sys.stdin.readline().split())
+            a, b, c = map(int, sys.stdin.readline().split())
             self.key[i] = a
             self.left[i] = b
             self.right[i] = c
 
-    def in_order(self):
-        self.result = []
+    def in_order(self, index=0):
+        result = []
         # Finish the implementation
         # You may need to add a new recursive method to do that
+        if index == -1:
+            return result
+        result.extend(self.in_order(self.left[index]))
+        result.append(self.key[index])
+        result.extend(self.in_order(self.right[index]))
+        return result
 
-        return self.result
-
-    def pre_order(self):
-        self.result = []
+    def pre_order(self, index=0):
+        result = []
         # Finish the implementation
         # You may need to add a new recursive method to do that
+        if index == -1:
+            return result
+        result.append(self.key[index])
+        result.extend(self.pre_order(self.left[index]))
+        result.extend(self.pre_order(self.right[index]))
+        return result
 
-        return self.result
-
-    def post_order(self):
-        self.result = []
+    def post_order(self, index=0):
+        result = []
         # Finish the implementation
         # You may need to add a new recursive method to do that
-
-        return self.result
+        if index == -1:
+            return result
+        result.extend(self.post_order(self.left[index]))
+        result.extend(self.post_order(self.right[index]))
+        result.append(self.key[index])
+        return result
 
 
 def main():
