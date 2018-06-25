@@ -19,37 +19,49 @@ class TreeOrders:
             self.left[i] = b
             self.right[i] = c
 
-    def in_order(self, index=0):
+    def in_order(self):
         result = []
         # Finish the implementation
         # You may need to add a new recursive method to do that
-        if index == -1:
-            return result
-        result.extend(self.in_order(self.left[index]))
-        result.append(self.key[index])
-        result.extend(self.in_order(self.right[index]))
+        result = self.in_order_recursive(0, result)
         return result
 
-    def pre_order(self, index=0):
-        result = []
-        # Finish the implementation
-        # You may need to add a new recursive method to do that
-        if index == -1:
-            return result
-        result.append(self.key[index])
-        result.extend(self.pre_order(self.left[index]))
-        result.extend(self.pre_order(self.right[index]))
+    def in_order_recursive(self, node, result):
+        if node == -1:
+            return
+        self.in_order_recursive(self.left[node], result)
+        result.append(self.key[node])
+        self.in_order_recursive(self.right[node], result)
         return result
 
-    def post_order(self, index=0):
+    def pre_order(self):
         result = []
         # Finish the implementation
         # You may need to add a new recursive method to do that
-        if index == -1:
-            return result
-        result.extend(self.post_order(self.left[index]))
-        result.extend(self.post_order(self.right[index]))
-        result.append(self.key[index])
+        result = self.pre_order_recursive(0, result)
+        return result
+
+    def pre_order_recursive(self, node, result):
+        if node == -1:
+            return
+        result.append(self.key[node])
+        self.pre_order_recursive(self.left[node], result)
+        self.pre_order_recursive(self.right[node], result)
+        return result
+
+    def post_order(self):
+        result = []
+        # Finish the implementation
+        # You may need to add a new recursive method to do that
+        result = self.post_order_recursive(0, result)
+        return result
+
+    def post_order_recursive(self, node, result):
+        if node == -1:
+            return
+        self.post_order_recursive(self.left[node], result)
+        self.post_order_recursive(self.right[node], result)
+        result.append(self.key[node])
         return result
 
 
