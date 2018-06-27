@@ -25,7 +25,14 @@ def in_order_recursive(tree, vertex, keys):
     if vertex == -1:
         return True
     result = in_order_recursive(tree, tree[vertex][1], keys)
-    if not result or (keys and keys[-1] > tree[vertex][0]):
+    # If the previous result is False, then the check is completed.
+    # If the value of the last key in the list is greater than the current one,
+    # then it is not bst, return False.
+    # If the vertex has a left child and the key values ​​are equal,
+    # then it is also not bst, return False.
+    if not result or (keys and (keys[-1] > tree[vertex][0])) or (
+            tree[vertex][1] != -1 and tree[tree[vertex][1]][0] == tree[vertex][0]
+    ):
         return False
     keys.append(tree[vertex][0])
     result = in_order_recursive(tree, tree[vertex][2], keys)
